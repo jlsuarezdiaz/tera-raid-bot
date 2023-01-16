@@ -17,6 +17,7 @@ import json
 
 # Library for regular expressions
 import re
+from collections import defaultdict
 
 # The URL to fetch the webpage data
 URL="https://asia-northeast1-boshu-prod.cloudfunctions.net/boshu/boards/pokemonTeraraid/items_bundle"
@@ -46,25 +47,61 @@ subscriptions = [
         "Join conditions": "Any"
     },
 
-    {
-        "Pokemon name": "Cinderace",
-        "Tera type": "Any",
-        "No. of ★": "7★",
-        "Join conditions": "Any"
-    },
+#    {
+#        "Pokemon name": "Cinderace",
+#        "Tera type": "Any",
+#        "No. of ★": "7★",
+#        "Join conditions": "Any"
+#    },
 
-    {
-        "Pokemon name": "Breloom",
-        "Tera type": "Any",
-        "No. of ★": "6★",
-        "Join conditions": "Any"
-    },
+#    {
+#        "Pokemon name": "Breloom",
+#        "Tera type": "Any",
+#        "No. of ★": "6★",
+#        "Join conditions": "Any"
+#    },
+
+#    {
+#        "Pokemon name": "Slowbro",
+#        "Tera type": "Any",
+#        "No. of ★": "5★",
+#        "Join conditions": "Any"
+#    },
+
+#    {
+#        "Pokemon name": "Slowking",
+#        "Tera type": "Any",
+#        "No. of ★": "6★",
+#        "Join conditions": "Any"
+#    },
+
+#    {
+#        "Pokemon name": "Espathra",
+#        "Tera type": "Any",
+#        "No. of ★": "4★",
+#        "Join conditions": "Any"
+#    },
+
+#    {
+#        "Pokemon name": "Sylveon",
+#        "Tera type": "Any",
+#        "No. of ★": "6★",
+#        "Join conditions": "Any"
+#    },
+
+#    {
+#        "Pokemon name": "Greninja",
+#        "Tera type": "Any",
+#        "No. of ★": "7★",
+#        "Join conditions": "Any"
+#    },
 ]
+
 
 # Constant that defines the number of items to fetch each time.
 FETCH_LIMIT = 30
 # Constant that defines the time to wait between each fetch.
-FETCH_INTERVAL = 5
+FETCH_INTERVAL = 1
 
 # Read the metadata json files: pokemon-names.json and meta-names.json
 with open("pokemon-names.json", "r") as pokemon_names_file:
@@ -73,14 +110,14 @@ with open("meta-names.json", "r") as meta_names_file:
     meta_names = json.load(meta_names_file)
 
 # Create english to japanese and japanes to english dictionaries for pokemon names and metadata.
-pokemon_names_eng_to_jpn = {}
-pokemon_names_jpn_to_eng = {}
+pokemon_names_eng_to_jpn = defaultdict(lambda: "Unknown") #defaultdict(lambda x: f"Unknown Pokemon: {x}")
+pokemon_names_jpn_to_eng = defaultdict(lambda: "Unknown") #defaultdict(lambda x: f"Unknown Pokemon: {x}")
 
-type_names_eng_to_jpn = {}
-type_names_jpn_to_eng = {}
+type_names_eng_to_jpn = defaultdict(lambda: "Unknown") #defaultdict(lambda x: f"Unknown Type: {x}")
+type_names_jpn_to_eng = defaultdict(lambda: "Unknown") #defaultdict(lambda x: f"Unknown Type: {x}")
 
-label_names_eng_to_jpn = {}
-label_names_jpn_to_eng = {}
+label_names_eng_to_jpn = defaultdict(lambda: "Unknown") #defaultdict(lambda x: f"Unknown Label: {x}")
+label_names_jpn_to_eng = defaultdict(lambda: "Unknown") #defaultdict(lambda x: f"Unknown Label: {x}")
 
 for pokemon in pokemon_names:
     pokemon_names_eng_to_jpn[pokemon["englishName"]] = pokemon["japaneseName"]
@@ -149,7 +186,7 @@ while True:
                 if "document" in a_dict and "isDeleted" in a_dict["document"]["fields"] and not a_dict["document"]["fields"]["isDeleted"]["booleanValue"]:
                     try:
                         new_dict = {}
-                        # print(a_dict["document"]["fields"])
+                    
                         # We add only the needed keys and values to the new dictionary.
                         new_dict["pokemonName"] = pokemon_names_jpn_to_eng[a_dict["document"]["fields"]["pokemonName"]["stringValue"]]
                         if "terasType" in a_dict["document"]["fields"]:
@@ -157,7 +194,7 @@ while True:
                         else:
                             new_dict["terasType"] = "???"
                         new_dict["difficultyLevel"] = a_dict["document"]["fields"]["difficultyLevel"]["integerValue"] + "★"
-                        if "values" in a_dict["document"]["fields"]["requestTags"]['arrayValue']:
+                        if "requestTags" in a_dict["document"]["fields"] and "values" in a_dict["document"]["fields"]["requestTags"]['arrayValue']:
                             new_dict["requestTags"] = [label_names_jpn_to_eng[a_dict["document"]["fields"]["requestTags"]["arrayValue"]["values"][i]["stringValue"]] for i in range(len(a_dict["document"]["fields"]["requestTags"]["arrayValue"]["values"]))]
                         else:
                             new_dict["requestTags"] = []

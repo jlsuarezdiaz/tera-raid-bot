@@ -23,5 +23,6 @@
  {"ID": "103", "englishName": "Perrserker Only", "japaneseName": "ニャイキングのみ", "type": "label"},
  {"ID": "104", "englishName": "Azumarill Only", "japaneseName": "マリルリのみ", "type": "label"},
  {"ID": "105", "englishName": "Sylveon Only", "japaneseName": "ニンフィアのみ", "type": "label"},
- {"ID": "106", "englishName": "Iron Hands Only", "japaneseName": "テツノカイナのみ", "type": "label"}
+ {"ID": "106", "englishName": "Iron Hands Only", "japaneseName": "テツノカイナのみ", "type": "label"},
+ {"ID": "107", "englishName": "Armarouge Only", "japaneseName": "グレンアルマのみ", "type": "label"}
 ]
